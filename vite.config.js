@@ -3,5 +3,5 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  base: "/chip-tracker/", // Change this to match your GitHub repo name
+  base: "/chip-tracker/", // ✅ Fix: Ensure correct base path for GitHub Pages
 });
