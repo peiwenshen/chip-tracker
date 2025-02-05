@@ -15,23 +15,22 @@ const ChipTracker = () => {
     return units.sort((a: number, b: number) => a - b);
   });
 
-  // Generate players based on settings
+  // Generate players
   const generatePlayers = () => {
     return Array.from({ length: numPlayers }, (_, i) => ({
       id: i + 1,
-      name: `Player ${i + 1}`,
+      name: `玩家 ${i + 1}`,
       chips: initialChips,
       isCurrentPlayer: i === 0,
     }));
   };
 
-  // Initialize players state with saved data or generate new players
+  // Initialize players
   const [players, setPlayers] = useState(() => {
     const savedPlayers = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (savedPlayers) {
       try {
         const parsedPlayers = JSON.parse(savedPlayers);
-        // Validate that saved data matches current settings
         if (parsedPlayers.length === numPlayers) {
           return parsedPlayers;
         }
@@ -45,10 +44,9 @@ const ChipTracker = () => {
   const [accumulatedTransfer, setAccumulatedTransfer] = useState(0);
   const [selectedReceiver, setSelectedReceiver] = useState<number | null>(null);
 
-  // Only update players when settings change AND there's no saved state
+  // Reset players when settings change
   useEffect(() => {
-    const savedPlayers = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!savedPlayers) {
+    if (!localStorage.getItem(LOCAL_STORAGE_KEY)) {
       setPlayers(generatePlayers());
     }
   }, [numPlayers, initialChips]);
@@ -97,26 +95,28 @@ const ChipTracker = () => {
   };
 
   return (
-    <div className="bg-white min-h-screen p-4 mx-auto w-full max-w-md sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Chip Tracker</h1>
-        <div className="flex gap-2">
-          <button onClick={resetGame} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200">
-            <RotateCcw size={24} />
+    <div className="w-full px-4 sm:px-6 md:px-8 mx-auto max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">籌碼記錄器</h1>
+        <div className="flex gap-3">
+          <button onClick={resetGame} className="p-3 bg-gray-100 rounded-lg hover:bg-gray-200">
+            <RotateCcw size={22} />
           </button>
-          <button onClick={() => navigate("/settings")} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200">
-            <Settings size={24} />
+          <button onClick={() => navigate("/settings")} className="p-3 bg-gray-100 rounded-lg hover:bg-gray-200">
+            <Settings size={22} />
           </button>
         </div>
       </div>
 
-      <div className="bg-gray-50 p-4 rounded-lg mb-4">
-        <div className="flex flex-wrap justify-center gap-2 mb-4">
+      {/* Player Selection */}
+      <div className="bg-gray-50 p-1 rounded-lg mb-6">
+        <div className="flex flex-wrap gap-2">
           {players.map(player => (
             <button
               key={player.id}
               onClick={() => setCurrentPlayer(player.id)}
-              className={`px-4 py-2 text-sm sm:text-base md:text-lg rounded-full transition ${
+              className={`px-5 py-3 text-sm sm:text-base rounded-lg transition flex-1 basis-1/4 ${
                 player.isCurrentPlayer ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -124,65 +124,71 @@ const ChipTracker = () => {
             </button>
           ))}
         </div>
+      </div>
 
-        <div className="flex flex-wrap justify-center gap-2">
+      {/* Chip Selection */}
+      <div className="bg-gray-50 p-4 rounded-lg mb-6">
+        <div className="grid grid-cols-3 sm:grid-cols-3 gap-3">
           {chipUnits.map(amount => (
             <button
               key={amount}
               onClick={() => addToTransfer(amount)}
-              className="px-6 py-3 text-sm sm:text-base md:text-lg bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition"
+              className="px-4 py-2 text-sm sm:text-base bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
             >
               +{amount}
             </button>
           ))}
         </div>
-
-        {accumulatedTransfer > 0 && (
-          <div className="mt-4 flex justify-between items-center text-lg sm:text-xl md:text-2xl font-bold">
-            <span>Accumulated Chips: {accumulatedTransfer}</span>
-            <button 
-              onClick={() => setAccumulatedTransfer(0)}
-              className="bg-red-100 text-red-600 p-2 rounded-full"
-            >
-              <X size={20} />
-            </button>
-          </div>
-        )}
       </div>
 
+      {/* Accumulated Chips */}
+      {accumulatedTransfer > 0 && (
+        <div className="mt-4 flex justify-between items-center text-lg sm:text-xl font-bold">
+          <span>累積轉移：{accumulatedTransfer} 籌碼</span>
+          <button 
+            onClick={() => setAccumulatedTransfer(0)}
+            className="bg-red-100 text-red-600 p-3 rounded-lg"
+          >
+            <X size={36} />
+          </button>
+        </div>
+      )}
+
+      {/* Player Info */}
       {players.map(player => (
-        <div key={player.id} className="bg-white border rounded-lg p-4 mb-4 shadow-sm flex items-center justify-between">
+        <div key={player.id} className="bg-white border rounded-lg p-4 mb-4 shadow-md flex items-center justify-between">
           <div>
-            <h2 className={`text-lg sm:text-xl md:text-2xl font-semibold ${player.isCurrentPlayer ? 'text-blue-600' : ''}`}>
-              {player.name} {player.isCurrentPlayer ? '(Current)' : ''}
+            <h2 className={`text-lg sm:text-xl font-semibold ${player.isCurrentPlayer ? 'text-blue-600' : ''}`}>
+              {player.name} {player.isCurrentPlayer ? '(當前玩家)' : ''}
             </h2>
-            <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-green-600">{player.chips} chips</p>
+            <p className="text-xl sm:text-2xl font-bold text-green-600">{player.chips} 籌碼</p>
           </div>
           {!player.isCurrentPlayer && (
             <button 
               onClick={() => setSelectedReceiver(player.id)}
-              className={`p-2 sm:p-3 md:p-4 rounded-full transition ${
+              className={`p-3 sm:p-4 rounded-lg transition ${
                 selectedReceiver === player.id ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              <Send size={24} />
+              <Send size={22} />
             </button>
           )}
         </div>
       ))}
 
-      {selectedReceiver && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white p-4 border-t shadow-lg">
+      {/* Transfer Confirmation Button (Fixed) */}
+      {selectedReceiver && accumulatedTransfer > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white p-4 border-t shadow-md">
           <button
             onClick={transferChips}
             disabled={currentPlayer?.chips < accumulatedTransfer}
-            className={`w-full p-4 text-lg sm:text-xl md:text-2xl rounded-lg transition ${
+            className={`w-full p-4 text-lg sm:text-xl rounded-lg transition ${
               currentPlayer?.chips >= accumulatedTransfer && accumulatedTransfer > 0
                 ? 'bg-blue-500 text-white hover:bg-blue-600' 
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >
-            Transfer {accumulatedTransfer} chips to {players.find(p => p.id === selectedReceiver)?.name}
+            確認轉移 {accumulatedTransfer} 籌碼給 {players.find(p => p.id === selectedReceiver)?.name}
           </button>
         </div>
       )}

@@ -11,7 +11,7 @@ const Settings = () => {
   const DEFAULT_CHIP_UNITS = [10, 20, 50];
 
   // All available chip choices
-  const CHIP_OPTIONS = [5, 10, 20, 50, 100, 200, 500, 1000];
+  const CHIP_OPTIONS = [5, 10, 20, 30, 50, 100, 200, 500, 1000];
 
   // Load settings from localStorage or set defaults
   const [numPlayers, setNumPlayers] = useState(() => {
@@ -50,7 +50,7 @@ const Settings = () => {
   };
 
   const decreasePlayers = () => {
-    setNumPlayers((prev) => Math.max(0, prev - 1)); // ✅ Allows minimum `0` players
+    setNumPlayers((prev) => Math.max(2, prev - 1)); // ✅ Minimum 2 players
   };
 
   // Increase/Decrease Initial Chips by 1000
@@ -59,7 +59,7 @@ const Settings = () => {
   };
 
   const decreaseChips = () => {
-    setInitialChips((prev) => Math.max(0, prev - 1000)); // ✅ Allows `0` chips
+    setInitialChips((prev) => Math.max(1000, prev - 1000)); // ✅ Minimum 1000 chips
   };
 
   // Toggle chip selection
@@ -75,7 +75,7 @@ const Settings = () => {
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold text-gray-800">Game Settings</h1>
+          <h1 className="text-2xl font-bold text-gray-800">遊戲設定</h1>
           <button
             onClick={resetSettings}
             className="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition"
@@ -86,7 +86,7 @@ const Settings = () => {
 
         {/* Number of Players */}
         <label className="block mb-3">
-          <span className="font-medium text-gray-700">Number of Players:</span>
+          <span className="font-medium text-gray-700">玩家人數：</span>
           <div className="flex items-center mt-1">
             <button
               className="bg-gray-200 px-3 py-2 rounded-l hover:bg-gray-300 transition"
@@ -109,9 +109,9 @@ const Settings = () => {
           </div>
         </label>
 
-        {/* Initial Chips per Player (with +1000 button) */}
+        {/* Initial Chips per Player */}
         <label className="block mb-3">
-          <span className="font-medium text-gray-700">Initial Chips per Player:</span>
+          <span className="font-medium text-gray-700">每位玩家的起始籌碼：</span>
           <div className="flex items-center mt-1">
             <button
               className="bg-gray-200 px-3 py-2 rounded-l hover:bg-gray-300 transition"
@@ -134,9 +134,9 @@ const Settings = () => {
           </div>
         </label>
 
-        {/* Chip Denominations (Multi-Select) */}
+        {/* Chip Denominations Selection */}
         <label className="block mb-4">
-          <span className="font-medium text-gray-700">Select Chip Denominations:</span>
+          <span className="font-medium text-gray-700">選擇可用的籌碼面額：</span>
           <div className="flex flex-wrap gap-2 mt-2">
             {CHIP_OPTIONS.map((chip) => (
               <button
@@ -159,7 +159,7 @@ const Settings = () => {
           className="w-full py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition"
           onClick={() => navigate("/")}
         >
-          Save & Start Game
+          儲存並開始遊戲
         </button>
       </div>
     </div>
