@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { RotateCcw, Send, X, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { trackTransfer } from "./analytics";
 
 const LOCAL_STORAGE_KEY = "chip-tracker-players";
 
@@ -71,6 +72,8 @@ const ChipTracker = () => {
 
   const transferChips = () => {
     if (!selectedReceiver || accumulatedTransfer === 0) return;
+
+    trackTransfer();
 
     setPlayers(players.map(player => {
       if (player.id === currentPlayer?.id) {
